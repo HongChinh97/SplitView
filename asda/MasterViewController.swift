@@ -9,20 +9,22 @@ import UIKit
 
 class MasterViewController: UITableViewController {
     
+   
     var detailViewController: DetailViewController? = nil
     //        var photoArray = [Any]()
     
     var photoArray = ["image1", "image2", "image3",  "image4"]
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         navigationItem.leftBarButtonItem = editButtonItem
         
-        
         if let split = splitViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+
         }
     }
     
@@ -45,12 +47,33 @@ class MasterViewController: UITableViewController {
             if let indexPath = tableView.indexPathForSelectedRow {
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
                 controller.newName = photoArray[indexPath.row]
+                
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
         }
     }
     
+    func displaySpinner() {
+        let onView = UIView()
+        let spinnerView = UIView.init(frame: onView.bounds)
+        spinnerView.backgroundColor = UIColor.init(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+        let ai = UIActivityIndicatorView.init(activityIndicatorStyle: .whiteLarge)
+        ai.startAnimating()
+        ai.center = spinnerView.center
+        DispatchQueue.main.async {
+            spinnerView.addSubview(ai)
+            onView.addSubview(spinnerView)
+        }
+        
+    }
+    
+    
+    func removeSpinner(spinner: UIView) {
+        DispatchQueue.main.async {
+            spinner.removeFromSuperview()
+        }
+    }
     // MARK: - Table View
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -65,6 +88,8 @@ class MasterViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         cell.textLabel?.text = photoArray[indexPath.row]
         cell.imageView?.image = UIImage(named: photoArray[indexPath.row])
+       
+        
         
         return cell
     }
